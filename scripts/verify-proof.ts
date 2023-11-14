@@ -4,6 +4,7 @@ import circuit from './../circuit/target/main.json';
 
 
 import fs from 'fs';
+import { preprocess_proof } from './utils';
 
 
 const main = async () => {
@@ -12,12 +13,9 @@ const main = async () => {
   // @ts-ignore
   const noir = new Noir(circuit, backend);
 
-  const proof = JSON.parse(fs.readFileSync('proof.json').toString());
+  const proof_string = fs.readFileSync('proof.json').toString();
 
-  const result = await noir.verifyFinalProof({
-    proof: new Uint8Array(proof.proof),
-    publicInputs: proof.publicInputs.map((i: number[]) => new Uint8Array(i)),
-  });
+  const result = await noir.verifyFinalProof(preprocess_proof(proof_string));
 
   // Fails
   console.log(`Verification result: ${result}`);
